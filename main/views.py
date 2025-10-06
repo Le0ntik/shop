@@ -20,7 +20,7 @@ class IndexView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
-            return TemplateResponse(request, 'main/hime_content.html', context)
+            return TemplateResponse(request, 'main/home_content.html', context)
         return TemplateResponse(request, self.template_name, context)
     
     
@@ -31,7 +31,7 @@ class CatalogView(TemplateView):
         'color': lambda quersyset, value: quersyset.filter(color_iexact=value),
         'min_price': lambda quersyset, value: quersyset.filter(price_gte=value),
         'max_price': lambda quersyset, value: quersyset.filter(price_lte=value),
-        'size': lambda quersyset, value: quersyset.filter(product_size_size_name=value),
+        'size': lambda quersyset, value: quersyset.filter(product_sizes_size_name=value),
     }
     
     
@@ -81,15 +81,16 @@ class CatalogView(TemplateView):
     
     
     def get(self, request, *args, **kwargs):
-        context = self.content_data(**kwargs)
+        context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
             if context.get('show_search'):
-                return TemplateResponse(request, 'main/search_input', context)
+                return TemplateResponse(request, 'main/search_input.html', context)
             elif context.get('reset_search'):
                 return TemplateResponse(request, 'main/search_button.html', {})
-            template = 'main/filter_modal.html' if request.Get.get('show_filter') == 'true' else 'main/catalog.html'
+            template = 'main/filter_modal.html' if request.GET.get('show_filters') == 'true' else 'main/catalog.html'
             return TemplateResponse(request, template, context)
         return TemplateResponse(request, self.template_name, context)
+    
             
         
 class ProductDetailView(DeleteView):
